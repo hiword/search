@@ -16,12 +16,8 @@ abstract class Searchs {
 		$this->param = $this->resolve->set($param)->get();
 	}
 	
-	protected function getResult($options) {
-		if (isset($options['page'])) {
-			
-		} else {
-			
-		}
+	public function get() {
+		return $this->resolve();
 	}
 	
 	protected function resolveSingle($table,$options) {
@@ -39,70 +35,30 @@ abstract class Searchs {
 		//get result
 		$result = array();
 		
-		if (!empty($data['page'])) {
-			$pageResult = $this->resolvePagination($data['page']);
+		if (isset($options['page'])) {
+			$pageResult = $this->resolvePage($options['page']);
 			$result['data'] = $pageResult->items();
 			$result['page'] = $pageResult->render();
 		} else {
-			if (!empty($data['limit'])) {
-				$this->resolveLimit($data['limit']);
-			}
-// 			$result['data'] = $this->selectModel->get();
+			$result['data'] = $this->model->get();
+			$result['page'] = null;
 		}
 		
 		return $result;
 	}
 	
-	public function resolve($param = null) {
+	protected function resolve($param = null) {
+		
+		static $result;
+		
 		empty($param) && $param = $this->param;
 		
 		foreach ($param as $key=>$values) {
 			
-			$this->resolveSingle($key, $values);
+			$result[$key] = $this->resolveSingle($key, $values);
 				
-				
-	
-			$this->_result[$key] = $result = $this->_model->get();
-				
-			if (!empty($values['_has_one'])) {
-				$this->resolveHasOne($values['_has_one'],$result);
-			}
-			// 			if (empty($keys)) {
-			// 				$result = $this->_result[$key] = $this->_model->get();
-			// 			} else {
-			// 				$result = $this->_result[$key][$keys] = $this->_model->get();
-			// 			}
-				
-			// 			foreach ($this->_result[$key] as $values) {
-			// 				$d = $values->toArray();
-			// 				print_r($d);exit();
-			// 				//$this->result[$key] =
-			// 				echo $values->id;exit();
-			// 			}
-	
-			/* if (!empty($values['_has_one'])) {
-			 $this->_result[$keys]['_has_one'][$key] = $result;
-			$this->resolveHasOne($values['_has_one'],$result,$key);
-	
-			} else {
-			$this->_result[$key] = $result;
-			} */
-				
-			// 			$this->getModel($key,$rel);
-			//$this->_result[$key] = $this->_model->get();
-				
-			// 			$this->_result[$key] = $this->_model->get();
-			// 			$result = $this->_model->get();
-			// 			foreach ($result as $values) {
-			// 				var_dump($result);exit();
-			// 				echo $values->title;
-			// 				echo '<br />';
-			// 				echo $values->content;
-			// 				exit();
-			// 			}
-			// 			echo DB::getQueryLog();exit();
-			
 		}
+		return $result;
 	}
 	
 	/**
@@ -132,6 +88,8 @@ abstract class Searchs {
 	abstract protected function resolveOrder(array $order);
 	
 	abstract protected function resolveHasOne();
+	
+	abstract protected function resolvePage($page);
 	
 	abstract protected function resolveHasMany();
 	

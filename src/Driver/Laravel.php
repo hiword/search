@@ -24,6 +24,14 @@ class Laravel extends Searchs {
 	 	$this->model->orderBy($order[0],$order[1]);
 	 }
 	 
+	 /**
+	  * 解析分页
+	  * @param unknown $data
+	  */
+	 protected function resolvePage($page) {
+	 	return $this->model->paginate($page);
+	 }
+	 
 	 protected function resolveHasOne() {
 	 	
 	 }
