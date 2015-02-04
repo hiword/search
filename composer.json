@@ -1,5 +1,5 @@
 {
-    "name": "searchs",
+    "name": "simon/searchs",
     "description": "database searchs.",
     "type": "library",
     "keywords": ["console", "interactive", "shell", "repl"],
