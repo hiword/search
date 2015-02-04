@@ -1,0 +1,27 @@
+{
+    "name": "searchs",
+    "description": "database searchs.",
+    "type": "library",
+    "keywords": ["console", "interactive", "shell", "repl"],
+    "homepage": "https://github.com/hiword/searchs",
+    "authors": [
+        {
+            "name": "simon",
+            "email": "28737164@qq.com",
+            "homepage": "http://crcms.cn"
+        }
+    ],
+    "require": {
+        "php": ">=5.4.0",
+    },
+    "autoload": {
+        "psr-4": {
+            "Searchs\\": "src/"
+        }
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.0-dev"
+        }
+    },
+}
