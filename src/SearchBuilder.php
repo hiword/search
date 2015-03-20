@@ -14,21 +14,23 @@ abstract class SearchBuilder  {
 	 */
 	protected $model = null;
 	
-	
-	public function __construct($model,array $param = array()) {
-		
-		//解析条件
-		$Resolve = new Resolve($param);
-		$this->options = $Resolve->getResolve();
-		
+	/**
+	 * 设置数据集
+	 * @param Object $model
+	 * @param array $options
+	 * @return SearchBuilder
+	 */
+	public function set($model,array $options) {
+		$this->options = $options;
 		$this->model = $model;
+		return $this;
 	}
 	
 	/**
 	 * 获取最后模型
 	 * @return object
 	 */
-	public function getModel() {
+	public function get() {
 		
 		foreach ($this->options as $method=>$values) {
 			if (empty($values)) {
