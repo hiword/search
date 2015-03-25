@@ -7,6 +7,7 @@ class Search {
 	
 	public function __construct(SearchBuilder $search,$model,array $data = array()) {
 		$this->search = $search;
+		$this->set($model,$data);
 	}
 	
 	public function set($model,array $data = array()) {
