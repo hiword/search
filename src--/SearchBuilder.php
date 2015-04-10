@@ -45,7 +45,7 @@ abstract class SearchBuilder  {
 	/**
 	 * where条件设置
 	 */
-	abstract protected function where(array $where = array());
+	abstract protected function where(array $where = array(),$model = null);
 	
 	/**
 	 * limit

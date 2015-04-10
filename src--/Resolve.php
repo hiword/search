@@ -34,7 +34,7 @@ class Resolve {
 	protected $param = array();
 	protected $data = array();
 	protected $model = array();
-	protected $options = ['field'=>[],'where'=>[],'order'=>[],'limit'=>[],'join'=>[]];
+	protected $options = ['field'=>[],'where'=>[],'order'=>[],'limit'=>[]];
 	
 	public function __construct(array $param) {
 		$this->param = $param;
@@ -100,16 +100,6 @@ class Resolve {
 	 */
 	protected function where($where) {
 		$this->options['where'] = $where;
-		return $this;
-	}
-	
-	/**
-	 * 解析join
-	 * @param array $join
-	 * @return \Searchs\Resolve
-	 */
-	protected function join(array $join) {
-		$this->options['join'] = $join;
 		return $this;
 	}
 	

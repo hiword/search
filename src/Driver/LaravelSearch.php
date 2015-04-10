@@ -3,34 +3,90 @@ namespace Searchs\Driver;
 use Searchs\SearchBuilder;
 class LaravelSearch extends SearchBuilder {
 	
+	/**
+	 * where加工方法
+	 * @param array $where
+	 * @param unknown $model
+	 * @param string $tempModel
+	 * @return mixed
+	 */
+	private function whereFactory(array $where,$model,$tempModel = null) {
+		
+		foreach ($where as $values) {
+			//获取解析方法
+			$method = array_shift($values);
+		
+			if (is_array($values[0])) {
+				$model = call_user_func(array($model,$method),
+						function ($query) use ($values,$model){
+							$this->where($values,$model,$query);
+						}
+				);
+			} else {
+				$model = call_user_func_array(array($tempModel ? $tempModel : $model,$method),$values);
+			}
+		}
+		
+		return $model;
+	}
+	
 	/* (non-PHPdoc)
 	 * @see \Searchs\SearchBuilder::where()
 	 */
-	protected function where(array $where = array(), $model = null) {
+	protected function where(array $where = array()) {
 		// TODO Auto-generated method stub
 		//设置默认值
 		empty($where) && $where = $this->options['where'];
 		
 		//一维转二维数组
 		count($where)===count($where,true) && $where = [$where];
-
-		foreach ($where as $values) {
-			//获取解析方法
-			$method = array_shift($values);
-				
-			if (is_array($values[0])) {
-				$this->model = call_user_func(array($this->model,$method),
-						function ($query) use ($values){
-							$this->where($values,$query);
-						}
-				);
-			} else {
-				$this->model = call_user_func_array(array($model ? $model : $this->model,$method),$values);
-			}
-		}
+		
+		$this->model = $this->whereFactory($where, $this->model);
 		
 		return $this->model;
 	}
+	
+	
+	/**注意下面注释方法勿删除，上面两个方法是从下面演化而来的**/
+	
+// 	/* (non-PHPdoc)
+// 	 * @see \Searchs\SearchBuilder::where()
+// 	 */
+// 	protected function where(array $where = array(), $tempModel = null,$model = null) {
+// 		// TODO Auto-generated method stub
+// 		//设置默认值
+// 		empty($where) && $where = $this->options['where'];
+		
+// 		if (empty($model)) {
+// 			$model = $this->model;
+// 			$assignment = true;
+// 		}
+		
+// 		//一维转二维数组
+// 		count($where)===count($where,true) && $where = [$where];
+
+// 		foreach ($where as $values) {
+// 			//获取解析方法
+// 			$method = array_shift($values);
+				
+// 			if (is_array($values[0])) {
+// 				$model = call_user_func(array($model,$method),
+// 						function ($query) use ($values){
+// 							$this->where($values,$query);
+// 						}
+// 				);
+// 			} else {
+// 				$model = call_user_func_array(array($tempModel ? $tempModel : $model,$method),$values);
+// 			}
+// 		}
+		
+// 		//
+// 		if (isset($assignment)) {
+// 			return $this->model = $model;
+// 		} else {
+// 			return $model;
+// 		}
+// 	}
 
 	/* (non-PHPdoc)
 	 * @see \Searchs\SearchBuilder::limit()
@@ -68,6 +124,32 @@ class LaravelSearch extends SearchBuilder {
 	protected function join() {
 		// TODO Auto-generated method stub
 		
+		foreach ($this->options['join'] as $table=>$join) {
+			
+			$joinType = is_array($join[0]) ? 'join' : array_shift($join);
+			
+			$this->model = $this->model->$joinType($table,function($joinObject) use ($join){
+				
+				//get where
+				if (isset($join['where'])) {
+					$where = $join['where'];
+					unset($join['where']);
+				}
+				
+				//set on or on
+				foreach ($join as $on) {
+					$joinObject = call_user_func_array([$joinObject,array_shift($on)], $on);
+				} 
+				
+				//set where last index
+				isset($where) && $joinObject = $this->whereFactory($where,$joinObject);
+				
+			});
+		}
+		
+
+// 		if ())
+		//dd($this->options['join']);
 	}
 
 
