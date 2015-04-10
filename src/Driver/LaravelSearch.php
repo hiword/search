@@ -32,16 +32,25 @@ class LaravelSearch extends SearchBuilder {
 	
 	/* (non-PHPdoc)
 	 * @see \Searchs\SearchBuilder::where()
+	 * 
+	 * [
+	 * 		['where','users.create_userid','=',$this->session->id]
+	 * 		['orWhere','users.create_userid','=',$this->session->id]
+	 * 		[
+	 * 			'where',
+	 * 			[where,'users.create_userid','=',$this->session->id]
+	 * 			[whereIn,id,[1,2,3,4]]
+	 * 		]
+	 * ]
 	 */
-	protected function where(array $where = array()) {
+	protected function where() {
 		// TODO Auto-generated method stub
 		//设置默认值
-		empty($where) && $where = $this->options['where'];
 		
 		//一维转二维数组
-		count($where)===count($where,true) && $where = [$where];
+		count($this->options['where'])===count($this->options['where'],true) && $this->options['where'] = [$this->options['where']];
 		
-		$this->model = $this->whereFactory($where, $this->model);
+		$this->model = $this->whereFactory($this->options['where'], $this->model);
 		
 		return $this->model;
 	}
@@ -90,6 +99,9 @@ class LaravelSearch extends SearchBuilder {
 
 	/* (non-PHPdoc)
 	 * @see \Searchs\SearchBuilder::limit()
+	 * 
+	 * [0,1]
+	 * [10,1]
 	 */
 	protected function limit() {
 		// TODO Auto-generated method stub
@@ -100,6 +112,8 @@ class LaravelSearch extends SearchBuilder {
 
 	/* (non-PHPdoc)
 	 * @see \Searchs\SearchBuilder::field()
+	 * 
+	 * [field1,field2,field3]
 	 */
 	protected function field() {
 		// TODO Auto-generated method stub
@@ -110,6 +124,8 @@ class LaravelSearch extends SearchBuilder {
 
 	/* (non-PHPdoc)
 	 * @see \Searchs\SearchBuilder::order()
+	 * 
+	 * [id,desc]
 	 */
 	protected function order() {
 		// TODO Auto-generated method stub
@@ -120,6 +136,15 @@ class LaravelSearch extends SearchBuilder {
 
 	/* (non-PHPdoc)
 	 * @see \Searchs\SearchBuilder::join()
+	 * 
+	 * 'user_datas'=>[
+				'leftjoin',
+				['on','users.id','=','user_datas.userid'],
+				['orOn','users.id','=','user_datas.userid'],
+				'where'=>[
+					['where','create_userid','=',$this->session->id]
+				]
+			],
 	 */
 	protected function join() {
 		// TODO Auto-generated method stub
