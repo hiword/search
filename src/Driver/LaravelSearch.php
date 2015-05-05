@@ -19,7 +19,7 @@ class LaravelSearch extends SearchBuilder {
 			if (is_array($values[0])) {
 				$model = call_user_func(array($model,$method),
 						function ($query) use ($values,$model){
-							$this->where($values,$model,$query);
+							$this->whereFactory($values,$model,$query);
 						}
 				);
 			} else {
